@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 public class Server {
 
-    public final static String REGISTER_COMMAND = "INSCRIRE";
+    public final static String REGISTER_COMMAND = "INSCRIRE"; // test
     public final static String LOAD_COMMAND = "CHARGER";
     private final ServerSocket server;
     private Socket client;
