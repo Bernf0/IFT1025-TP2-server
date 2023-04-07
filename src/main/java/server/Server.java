@@ -2,6 +2,7 @@ package server;
 
 import javafx.util.Pair;
 import server.models.Course;
+import server.models.RegistrationForm;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -96,8 +97,7 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public static void handleLoadCourses(String arg) {
-        // TODO: implémenter cette méthode
+    public static void handleLoadCourses(String arg) { //  DOIT ENLEVER LE STATIC!!! (seulement pour test)
         try {
             Scanner scan = new Scanner(new File("src/main/java/server/data/cours.txt"));
             ArrayList<Course> listeCours = new ArrayList<Course>();
@@ -120,12 +120,15 @@ public class Server {
             FileOutputStream fileOs = new FileOutputStream("listeCours_filtree.dat");
             ObjectOutputStream os = new ObjectOutputStream(fileOs);
             os.writeObject(listeCoursSession);
+            os.close();
             System.out.println(listeCoursSession);
 
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException e) {
             System.out.println("erreur à l'ouverture du fichier");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Erreur à l'écriture");
+            throw new RuntimeException(e); // c'est intellij qui a rajouté ça
+
         }
     }
 
@@ -134,8 +137,25 @@ public class Server {
      et renvoyer un message de confirmation au client.
      La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
-    public void handleRegistration() {
-        // TODO: implémenter cette méthode
+    public static void handleRegistration() { //  DOIT ENLEVER LE STATIC!!! (seulement pour test)
+        try {
+            // Récupérer l'objet 'RegistrationForm' envoyé par le client
+            FileInputStream fileInputStream = new FileInputStream("RegistrationForm.dat"); // variable de nom du fichier?
+            ObjectInputStream input = new ObjectInputStream(fileInputStream);
+            RegistrationForm registrationForm = (RegistrationForm) input.readObject();
+
+            // Enregistrer l'objet dans un fichier text
+            String nomFichier = "RegistrationForm.txt";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(nomFichier));
+            writer.write(registrationForm.toString());
+            writer.close();
+
+            // Envoyer un message de confirmation au client
+            String message = "L'objet RegistrationForm a bien été enregistré dans le fichier texte " + nomFichier;
+            // Je sais pas comment envoyé le message
+        } catch (IOException e) { //vérifier les exceptions, il en manque
+            System.out.println("Erreur lors de l'écriture du fichier");
+        }
     }
 }
 
