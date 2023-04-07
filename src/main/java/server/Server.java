@@ -1,14 +1,14 @@
 package server;
 
 import javafx.util.Pair;
+import server.models.Course;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Server {
 
@@ -16,21 +16,23 @@ public class Server {
     public final static String LOAD_COMMAND = "CHARGER";
     private final ServerSocket server;
     private Socket client;
-    private ObjectInputStream objectInputStream;
-    private ObjectOutputStream objectOutputStream;
-    private final ArrayList<EventHandler> handlers;
+    private ObjectInputStream objectInputStream; //lire des objets du flux entrant de données depuis le client.
+    private ObjectOutputStream objectOutputStream; //écrire des objets dans le flux sortant de données vers le client.
+    private final ArrayList<EventHandler> handlers; //stocker les objets qui gèrent les événements liés aux commandes envoyées par les clients.
 
-    public Server(int port) throws IOException {
+    public Server(int port) throws IOException { // constructeur
         this.server = new ServerSocket(port, 1);
         this.handlers = new ArrayList<EventHandler>();
         this.addEventHandler(this::handleEvents);
     }
 
-    public void addEventHandler(EventHandler h) {
+    public void addEventHandler(EventHandler h) { // ajout d'un objet EventHandler à la liste de handlers
         this.handlers.add(h);
     }
 
     private void alertHandlers(String cmd, String arg) {
+        // envoie à chaque h de la liste handlers que le message (cmd, arg) est arrivée
+        // et c'est à l'event de choisir comment réagir
         for (EventHandler h : this.handlers) {
             h.handle(cmd, arg);
         }
@@ -53,16 +55,20 @@ public class Server {
     }
 
     public void listen() throws IOException, ClassNotFoundException {
+        // écoute les entrées du flux données objectInputStream
+        // et déclenche des évenements pour chaque commande reçue avec le alertHandlers
         String line;
         if ((line = this.objectInputStream.readObject().toString()) != null) {
             Pair<String, String> parts = processCommandLine(line);
             String cmd = parts.getKey();
             String arg = parts.getValue();
-            this.alertHandlers(cmd, arg);
+            this.alertHandlers(cmd, arg); //
         }
     }
 
     public Pair<String, String> processCommandLine(String line) {
+        // permet de traiter une ligne de commande sous forme de chaîne de caractères
+        // et de la convertir en un objet 'Pair' qui contient cmd et arg séparés
         String[] parts = line.split(" ");
         String cmd = parts[0];
         String args = String.join(" ", Arrays.asList(parts).subList(1, parts.length));
@@ -90,8 +96,37 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public void handleLoadCourses(String arg) {
+    public static void handleLoadCourses(String arg) {
         // TODO: implémenter cette méthode
+        try {
+            Scanner scan = new Scanner(new File("src/main/java/server/data/cours.txt"));
+            ArrayList<Course> listeCours = new ArrayList<Course>();
+            ArrayList<Course> listeCoursSession = new ArrayList<Course>();
+
+            while (scan.hasNext()) { // lit le fichier et en fait une liste
+                String code = scan.next();
+                String name = scan.next();
+                String session = scan.next();
+
+                Course cours = new Course(name, code, session);
+                listeCours.add(cours);
+
+            }
+            for (Course coursChoisi : listeCours) { // fait une liste qui contient seulement les cours de la session donnée en arg
+                if (coursChoisi.getSession().equals(arg)) {
+                    listeCoursSession.add(coursChoisi);
+                }
+            }
+            FileOutputStream fileOs = new FileOutputStream("listeCours_filtree.dat");
+            ObjectOutputStream os = new ObjectOutputStream(fileOs);
+            os.writeObject(listeCoursSession);
+            System.out.println(listeCoursSession);
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("erreur à l'ouverture du fichier");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
