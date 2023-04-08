@@ -155,6 +155,8 @@ public class Server {
             // Je sais pas comment envoyé le message
         } catch (IOException e) { //vérifier les exceptions, il en manque
             System.out.println("Erreur lors de l'écriture du fichier");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
