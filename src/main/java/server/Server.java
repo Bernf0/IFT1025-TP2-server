@@ -132,7 +132,6 @@ public class Server {
             throw new RuntimeException(e); // c'est intellij qui a rajouté ça
         }
     }
-
     /**
      Récupérer l'objet 'RegistrationForm' envoyé par le client en utilisant 'objectInputStream', l'enregistrer dans un fichier texte
      et renvoyer un message de confirmation au client.
