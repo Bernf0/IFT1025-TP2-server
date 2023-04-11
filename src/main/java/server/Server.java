@@ -128,7 +128,6 @@ public class Server {
         } catch (IOException e) {
             System.out.println("Erreur à l'écriture");
             throw new RuntimeException(e); // c'est intellij qui a rajouté ça
-
         }
     }
 
