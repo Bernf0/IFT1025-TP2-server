@@ -121,7 +121,7 @@ public class Server {
             ObjectOutputStream os = new ObjectOutputStream(fileOs);
             os.writeObject(listeCoursSession);
             os.close();
-            System.out.println(listeCoursSession);
+            System.out.println(listeCoursSession); // Si j'ai bien compris, c'est plutôt le client qui doit print
 
         } catch (FileNotFoundException e) {
             System.out.println("erreur à l'ouverture du fichier");

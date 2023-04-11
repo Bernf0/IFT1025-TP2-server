@@ -2,35 +2,66 @@ package client;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
+import server.models.Course;
+import server.models.RegistrationForm;
 
 public class Client {
 
-    public static void main(String[] arg) {
-        int port = 1337;
+    Socket socket;
+    ObjectOutput oos;
+    ObjectInputStream ois;
+
+    public Client(Socket socket) throws IOException {
+        this.socket = socket;
+        this.oos = new ObjectOutputStream(socket.getOutputStream());
+        this.ois = new ObjectInputStream(socket.getInputStream());
+    }
+
+    public void disconnect() throws IOException {
+        oos.close();
+        ois.close();
+        socket.close();
+    }
+
+    public ArrayList<Course> getCourse(String session) {
+        Request request = new Request("CHARGER", session);
         try {
-            // Ouvrir une connexion avec le serveur
-            Socket clientSocket = new Socket("127.0.0.1", port);
-            System.out.println("Connexion établie avec le serveur");
-
-            // envoyer une requête "charger" au serveur
-            OutputStreamWriter outputStream = new OutputStreamWriter(clientSocket.getOutputStream());
-            BufferedWriter writer = new BufferedWriter(outputStream);
-            writer.write("charger\n");
-            writer.flush();
-
-            // Récupérer la liste des cours et les affiche
-            InputStream inputStream = clientSocket.getInputStream(); //copier de chatGPT
-            BufferedReader inStr = new BufferedReader(new InputStreamReader(inputStream)); //copier de chatGPT
-            String cours;
-            while ((cours = inStr.readLine()) != null){
-                System.out.println(cours);
-            }
-            // Fermer la connexion avec le server
-            clientSocket.close();
-            System.out.println("Connexion fermée avec le serveur.");
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            oos.writeObject(request);
+            return (ArrayList<Course>) ois.readObject();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    public void inscription(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Veuillez saisir votre prénom:");
+        String prenom = scanner.nextLine();
+        System.out.println("Veuillez saisir votre nom:");
+        String nom = scanner.nextLine();
+        System.out.println("Veuillez saisir votre email:");
+        String email = scanner.nextLine();
+        System.out.println("Veuillez saisir votre matricule:");
+        String matricule = scanner.nextLine();
+        System.out.println("Veuillez saisir le code du cours:");
+        String code = scanner.nextLine();
+        ArrayList<Course> allCourseList = this.getCourse("all");
+        Course cours = null;
+        for (Course course : allCourseList) {
+            if (course.getCode.equals(code)) {
+                cours = course;
+            }
+        }
+        if(cours == null){
+            System.out.println("Le cours choisi n'existe pas!");
+            return;
+        }
+        RegistrationForm registrationForm = new RegistrationForm(prenom, nom, email, matricule, cours);
+        Request request = new Request("INSCRIRE", registrationForm);
+
     }
 }
