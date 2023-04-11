@@ -97,11 +97,12 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public static void handleLoadCourses(String arg) { //  DOIT ENLEVER LE STATIC!!! (seulement pour test)
+    public void handleLoadCourses(String arg) { //  DOIT ENLEVER LE STATIC!!! (seulement pour test)
         try {
             Scanner scan = new Scanner(new File("src/main/java/server/data/cours.txt"));
             ArrayList<Course> listeCours = new ArrayList<Course>();
             ArrayList<Course> listeCoursSession = new ArrayList<Course>();
+            ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
 
             while (scan.hasNext()) { // lit le fichier et en fait une liste
                 String code = scan.next();
@@ -112,16 +113,17 @@ public class Server {
                 listeCours.add(cours);
 
             }
+            if (arg.equals("all")){ // envoit de la liste entière de cours au client pour l'inscription
+                oos.writeObject(listeCours);
+            }
             for (Course coursChoisi : listeCours) { // fait une liste qui contient seulement les cours de la session donnée en arg
                 if (coursChoisi.getSession().equals(arg)) {
                     listeCoursSession.add(coursChoisi);
                 }
             }
-            FileOutputStream fileOs = new FileOutputStream("listeCours_filtree.dat");
-            ObjectOutputStream os = new ObjectOutputStream(fileOs);
-            os.writeObject(listeCoursSession);
-            os.close();
-            System.out.println(listeCoursSession);
+            // envoit la liste de cours de la session choisie en arg au client
+            oos.writeObject(listeCoursSession);
+            oos.close();
 
         } catch (FileNotFoundException e) {
             System.out.println("erreur à l'ouverture du fichier");
@@ -136,11 +138,10 @@ public class Server {
      et renvoyer un message de confirmation au client.
      La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
-    public static void handleRegistration() { //  DOIT ENLEVER LE STATIC!!! (seulement pour test)
+    public void handleRegistration() { //  DOIT ENLEVER LE STATIC!!! (seulement pour test)
         try {
             // Récupérer l'objet 'RegistrationForm' envoyé par le client
-            FileInputStream fileInputStream = new FileInputStream("RegistrationForm.dat"); // variable de nom du fichier?
-            ObjectInputStream input = new ObjectInputStream(fileInputStream);
+            ObjectInputStream input = new ObjectInputStream(client.getInputStream());
             RegistrationForm registrationForm = (RegistrationForm) input.readObject();
 
             // Enregistrer l'objet dans un fichier text
@@ -151,7 +152,9 @@ public class Server {
 
             // Envoyer un message de confirmation au client
             String message = "L'objet RegistrationForm a bien été enregistré dans le fichier texte " + nomFichier;
-            // Je sais pas comment envoyé le message
+            ObjectOutputStream messageOut = new ObjectOutputStream(client.getOutputStream());
+            messageOut.writeObject(message);
+
         } catch (IOException e) { //vérifier les exceptions, il en manque
             System.out.println("Erreur lors de l'écriture du fichier");
         } catch (ClassNotFoundException e) {
