@@ -37,7 +37,7 @@ public class Client {
         }
     }
 
-    public void inscription(){
+    public void inscription() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Veuillez saisir votre prénom:");
         String prenom = scanner.nextLine();
@@ -62,6 +62,13 @@ public class Client {
         }
         RegistrationForm registrationForm = new RegistrationForm(prenom, nom, email, matricule, cours);
         Request request = new Request("INSCRIRE", registrationForm);
+         // à tester
+        try {
+            String message = (String) ois.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
 
     }
 }
