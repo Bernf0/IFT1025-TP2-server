@@ -136,7 +136,11 @@ public class Server {
      et renvoyer un message de confirmation au client.
      La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
+<<<<<<< Updated upstream
     public static void handleRegistration() { //  DOIT ENLEVER LE STATIC!!! (seulement pour test)
+=======
+    public void handleRegistration() {
+>>>>>>> Stashed changes
         try {
             // Récupérer l'objet 'RegistrationForm' envoyé par le client
             FileInputStream fileInputStream = new FileInputStream("RegistrationForm.dat"); // variable de nom du fichier?
