@@ -97,11 +97,12 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public static void handleLoadCourses(String arg) { //  DOIT ENLEVER LE STATIC!!! (seulement pour test)
+    public void handleLoadCourses(String arg) { //  DOIT ENLEVER LE STATIC!!! (seulement pour test)
         try {
             Scanner scan = new Scanner(new File("src/main/java/server/data/cours.txt"));
             ArrayList<Course> listeCours = new ArrayList<Course>();
             ArrayList<Course> listeCoursSession = new ArrayList<Course>();
+            ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
 
             while (scan.hasNext()) { // lit le fichier et en fait une liste
                 String code = scan.next();
@@ -112,16 +113,17 @@ public class Server {
                 listeCours.add(cours);
 
             }
+            if (arg.equals("all")){ // envoit de la liste entière de cours au client pour l'inscription
+                oos.writeObject(listeCours);
+            }
             for (Course coursChoisi : listeCours) { // fait une liste qui contient seulement les cours de la session donnée en arg
                 if (coursChoisi.getSession().equals(arg)) {
                     listeCoursSession.add(coursChoisi);
                 }
             }
-            FileOutputStream fileOs = new FileOutputStream("listeCours_filtree.dat");
-            ObjectOutputStream os = new ObjectOutputStream(fileOs);
-            os.writeObject(listeCoursSession);
-            os.close();
-            System.out.println(listeCoursSession); // Si j'ai bien compris, c'est plutôt le client qui doit print
+            // envoit la liste de cours de la session choisie en arg au client
+            oos.writeObject(listeCoursSession);
+            oos.close();
 
         } catch (FileNotFoundException e) {
             System.out.println("erreur à l'ouverture du fichier");
@@ -130,7 +132,6 @@ public class Server {
             throw new RuntimeException(e); // c'est intellij qui a rajouté ça
         }
     }
-
     /**
      Récupérer l'objet 'RegistrationForm' envoyé par le client en utilisant 'objectInputStream', l'enregistrer dans un fichier texte
      et renvoyer un message de confirmation au client.
