@@ -52,7 +52,7 @@ public class Client {
         ArrayList<Course> allCourseList = this.getCourse("all");
         Course cours = null;
         for (Course course : allCourseList) {
-            if (course.getCode.equals(code)) {
+            if (course.getCode().equals(code)) {
                 cours = course;
             }
         }
