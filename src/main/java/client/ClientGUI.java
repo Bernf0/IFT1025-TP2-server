@@ -28,10 +28,10 @@ public class ClientGUI extends Application {
         VBox codeCours = new VBox();
 
         TableView<String> table = new TableView<>();
-        TableColumn firstNameCol = new TableColumn("Code");
-        TableColumn lastNameCol = new TableColumn("Cours");
+        TableColumn codeCol = new TableColumn("Code");
+        TableColumn coursCol = new TableColumn("Cours");
 
-        table.getColumns().addAll(firstNameCol, lastNameCol);
+        table.getColumns().addAll(codeCol, coursCol);
 
         codeCours.getChildren().add(table);
 
@@ -39,7 +39,7 @@ public class ClientGUI extends Application {
 
         boxListeCours.getChildren().add(new Separator());
         HBox boxChargementCours = new HBox();
-        ComboBox<String> comboBox = new ComboBox<String>();
+        ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().addAll(
                 "Automne",
                 "Hiver",
@@ -101,6 +101,5 @@ public class ClientGUI extends Application {
     public static void main(String[] args) {
         launch();
     }
-
 
 }
