@@ -28,8 +28,8 @@ public class Client {
     public ArrayList<Course> getCourse(String session) {
         Request request = new Request("CHARGER", session);
         try {
-            oos.writeObject(request);
-            return (ArrayList<Course>) ois.readObject();
+            oos.writeObject("CHARGER" + session);
+            return (ArrayList<Course>) ois.readObject(); // à updater!!
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {

@@ -57,21 +57,21 @@ public class ClientLauncher {
             System.out.println("> Choix:");
             choix = scanner.nextInt();
         }
-
+        ArrayList<Course> courseList = null;
         // Sélectionne les bons cours selon la session choisie
         if(choix == 1){
-            ArrayList<Course> CourseList = client.getCourse("Automne");
+            courseList = client.getCourse("Automne");
         }
         if (choix == 2) {
-            ArrayList<Course> CourseList = client.getCourse("Hiver");
+            courseList = client.getCourse("Hiver");
         }
         if(choix == 3){
-            ArrayList<Course> CourseList = client.getCourse("Été");
+            courseList = client.getCourse("Été");
         }
 
-// Imprime la liste de cours pour la session choisie
-        for(int i = 0; i < CourseList.size(); i++){
-            System.out.println(i + ". " + CourseList.get(i).getCode() + "\t" + CourseList.get(i).getName());
+        // Imprime la liste de cours pour la session choisie
+        for(int i = 0; i < courseList.size(); i++){
+            System.out.println(i + ". " + courseList.get(i).getCode() + "\t" + courseList.get(i).getName());
         }
 
     }
