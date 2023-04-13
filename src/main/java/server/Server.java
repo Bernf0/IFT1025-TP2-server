@@ -7,6 +7,7 @@ import server.models.RegistrationForm;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -97,7 +98,7 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public void handleLoadCourses(String arg) { //  DOIT ENLEVER LE STATIC!!! (seulement pour test)
+    public void handleLoadCourses(String arg) {
         try {
             Scanner scan = new Scanner(new File("src/main/java/server/data/cours.txt"));
             ArrayList<Course> listeCours = new ArrayList<Course>();
