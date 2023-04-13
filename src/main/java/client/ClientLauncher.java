@@ -5,11 +5,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 import server.models.Course;
-import server.models.RegistrationForm;
 
 public class ClientLauncher {
     public static void main(String[] arg) {
         int port = 1337;
+
         try {
             // Ouvrir une connexion avec le serveur
             Socket clientSocket = new Socket("127.0.0.1", port);
@@ -29,7 +29,6 @@ public class ClientLauncher {
                 System.out.println("> Choix:");
                 choix = scanner.nextInt();
             }
-
             if(choix == 1){
                 printCourse(client);
             }
@@ -79,9 +78,8 @@ public class ClientLauncher {
             session = "Été";
         }
         System.out.println("Les cours offerts pendant la session d'" + session.toLowerCase() + " sont:");
-        for(int i = 0; i < courseList.size(); i++){
+        for (int i = 0; i < courseList.size(); i++){
             System.out.println(i + ". " + courseList.get(i).getCode() + "\t" + courseList.get(i).getName());
         }
-
     }
 }

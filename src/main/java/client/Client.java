@@ -35,7 +35,6 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
-
     public void inscription() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Veuillez saisir votre prénom:");
@@ -55,13 +54,14 @@ public class Client {
 
         //test
         System.out.println("print " + code);
+        //Course cours = new Course("foutuProg", code, "Ayt");
 
-        // ArrayList<Course> allCourseList = this.getCourse("all"); // ne fonctionne pas, doit être la liste de cours de seulement la session voulue
+        //ArrayList<Course> listeCoursSession = this.getCourse(session); // ne fonctionne pas doit être la liste de cours de seulement la session voulue
 
         // ajouter une erreur si le choix de cours d'est pas dasn la liste de cours de la session donnée
 
         Course cours = null;
-        for (Course course : allCourseList) {
+        for (Course course : listeCoursSession) {
             if (course.getCode().equals(code)) {
                 cours = course;
             }
@@ -70,12 +70,12 @@ public class Client {
             System.out.println("Le cours choisi n'existe pas!");
             return;
         }
+
         RegistrationForm registrationForm = new RegistrationForm(prenom, nom, email, matricule, cours);
-        //Request request = new Request("INSCRIRE ", registrationForm);
-         // à tester
+        System.out.println("se rend à inscrire");
         oos.writeObject("INSCRIRE ");//important de mettre un espace ici
         oos.writeObject(registrationForm); // comme vu sur piazza, mettre séparé
-        System.out.println("se rend à inscrire");
+
         try {
             String message = (String) ois.readObject();
             System.out.println(message);

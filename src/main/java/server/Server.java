@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.channels.ClosedByInterruptException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -114,9 +115,6 @@ public class Server {
                 listeCours.add(cours);
 
             }
-            if (arg.equals("all")){ // envoit de la liste entière de cours au client pour l'inscription
-                objectOutputStream.writeObject(listeCours);
-            }
             for (Course coursChoisi : listeCours) { // fait une liste qui contient seulement les cours de la session donnée en arg
                 if (coursChoisi.getSession().equals(arg)) {
                     listeCoursSession.add(coursChoisi);
@@ -174,6 +172,7 @@ public class Server {
 
             // Envoyer un message de confirmation au client
             String message = "Félicitations! Inscription réussie de " + registrationForm.getPrenom() +" au cours " + registrationForm.getCourse() + ".";
+            System.out.println(message);
             objectOutputStream.writeObject(message);
             objectOutputStream.close();
 
