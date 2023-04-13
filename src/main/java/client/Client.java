@@ -26,10 +26,9 @@ public class Client {
     }
 
     public ArrayList<Course> getCourse(String session) {
-        Request request = new Request("CHARGER", session);
         try {
-            oos.writeObject("CHARGER" + session);
-            return (ArrayList<Course>) ois.readObject(); // à updater!!
+            oos.writeObject("CHARGER " + session); //important de mettre un espace ici
+            return (ArrayList<Course>) ois.readObject();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
@@ -49,7 +48,18 @@ public class Client {
         String matricule = scanner.nextLine();
         System.out.println("Veuillez saisir le code du cours:");
         String code = scanner.nextLine();
-        ArrayList<Course> allCourseList = this.getCourse("all");
+        // Permet de s'assurer de pouvoir s'inscrire même si le code est inscrit en lettres minuscules
+        String troisPremieresLettres = code.substring(0,3);
+        String lettresMajuscules = troisPremieresLettres.toUpperCase();
+        code = lettresMajuscules + code.substring(3);
+
+        //test
+        System.out.println("print " + code);
+
+        // ArrayList<Course> allCourseList = this.getCourse("all"); // ne fonctionne pas, doit être la liste de cours de seulement la session voulue
+
+        // ajouter une erreur si le choix de cours d'est pas dasn la liste de cours de la session donnée
+
         Course cours = null;
         for (Course course : allCourseList) {
             if (course.getCode().equals(code)) {
@@ -61,10 +71,14 @@ public class Client {
             return;
         }
         RegistrationForm registrationForm = new RegistrationForm(prenom, nom, email, matricule, cours);
-        Request request = new Request("INSCRIRE", registrationForm);
+        //Request request = new Request("INSCRIRE ", registrationForm);
          // à tester
+        oos.writeObject("INSCRIRE ");//important de mettre un espace ici
+        oos.writeObject(registrationForm); // comme vu sur piazza, mettre séparé
+        System.out.println("se rend à inscrire");
         try {
             String message = (String) ois.readObject();
+            System.out.println(message);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

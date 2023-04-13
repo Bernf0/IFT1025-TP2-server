@@ -103,7 +103,7 @@ public class Server {
             Scanner scan = new Scanner(new File("src/main/java/server/data/cours.txt"));
             ArrayList<Course> listeCours = new ArrayList<Course>();
             ArrayList<Course> listeCoursSession = new ArrayList<Course>();
-            ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+
 
             while (scan.hasNext()) { // lit le fichier et en fait une liste
                 String code = scan.next();
@@ -115,7 +115,7 @@ public class Server {
 
             }
             if (arg.equals("all")){ // envoit de la liste entière de cours au client pour l'inscription
-                oos.writeObject(listeCours);
+                objectOutputStream.writeObject(listeCours);
             }
             for (Course coursChoisi : listeCours) { // fait une liste qui contient seulement les cours de la session donnée en arg
                 if (coursChoisi.getSession().equals(arg)) {
@@ -123,8 +123,8 @@ public class Server {
                 }
             }
             // envoit la liste de cours de la session choisie en arg au client
-            oos.writeObject(listeCoursSession);
-            oos.close();
+            objectOutputStream.writeObject(listeCoursSession);
+            objectOutputStream.close();
 
         } catch (FileNotFoundException e) {
             System.out.println("erreur à l'ouverture du fichier");
@@ -142,19 +142,40 @@ public class Server {
     public void handleRegistration() {
         try {
             // Récupérer l'objet 'RegistrationForm' envoyé par le client
-            ObjectInputStream input = new ObjectInputStream(client.getInputStream());
-            RegistrationForm registrationForm = (RegistrationForm) input.readObject();
+            RegistrationForm registrationForm = (RegistrationForm) objectInputStream.readObject();
 
+            // Récupération de la session du cours
+            Scanner scan = new Scanner(new File("src/main/java/server/data/cours.txt"));
+            ArrayList<Course> listeCours = new ArrayList<Course>();
+            String sessionInscrit = null;
+            while (scan.hasNext()) { // lit le fichier et en fait une liste
+                String code = scan.next();
+                String name = scan.next();
+                String session = scan.next();
+
+                Course cours = new Course(name, code, session);
+                listeCours.add(cours);
+
+            }
+            for (Course coursInscrit : listeCours){
+                if (coursInscrit.getCode().equals(registrationForm.getCourse())){
+                    sessionInscrit = coursInscrit.getSession();
+                }
+            }
             // Enregistrer l'objet dans un fichier text
-            String nomFichier = "RegistrationForm.txt";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(nomFichier));
-            writer.write(registrationForm.toString());
+            String fichierInscription = "inscription.txt";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(fichierInscription));
+            writer.write(sessionInscrit + "\n");
+            writer.write(registrationForm.getCourse().toString()+ "\n");
+            writer.write(registrationForm.getPrenom().toString()+ "\n");
+            writer.write(registrationForm.getNom().toString()+ "\n");
+            writer.write(registrationForm.getEmail().toString() + "\n");
             writer.close();
 
             // Envoyer un message de confirmation au client
-            String message = "L'objet RegistrationForm a bien été enregistré dans le fichier texte " + nomFichier;
-            ObjectOutputStream messageOut = new ObjectOutputStream(client.getOutputStream());
-            messageOut.writeObject(message);
+            String message = "Félicitations! Inscription réussie de " + registrationForm.getPrenom() +" au cours " + registrationForm.getCourse() + ".";
+            objectOutputStream.writeObject(message);
+            objectOutputStream.close();
 
         } catch (IOException e) { //vérifier les exceptions, il en manque
             System.out.println("Erreur lors de l'écriture du fichier");

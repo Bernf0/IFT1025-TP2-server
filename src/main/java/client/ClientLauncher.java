@@ -50,6 +50,7 @@ public class ClientLauncher {
         System.out.println("> Choix: ");
 
         int choix = scanner.nextInt();
+        String session = null;
 
         // Si l'utilisateur entre quelque chose qui n'est pas dans les choix, on lui redemande.
         while(choix != 1 & choix != 2 & choix != 3){
@@ -58,18 +59,26 @@ public class ClientLauncher {
             choix = scanner.nextInt();
         }
         ArrayList<Course> courseList = null;
+        String[] sessionsPossibles = {"Automne", "Hiver", "Ete"}; // ne doit pas mettre d'accent sinon ne reconnait pas le cours dans le fichier cours.txt
         // Sélectionne les bons cours selon la session choisie
         if(choix == 1){
-            courseList = client.getCourse("Automne");
+            session = sessionsPossibles[0];
+            courseList = client.getCourse(session);
         }
         if (choix == 2) {
-            courseList = client.getCourse("Hiver");
+            session = sessionsPossibles[1];
+            courseList = client.getCourse(session);
         }
         if(choix == 3){
-            courseList = client.getCourse("Été");
+            session = sessionsPossibles[2];
+            courseList = client.getCourse(session);
         }
 
         // Imprime la liste de cours pour la session choisie
+        if (session.equals("Ete")){
+            session = "Été";
+        }
+        System.out.println("Les cours offerts pendant la session d'" + session.toLowerCase() + " sont:");
         for(int i = 0; i < courseList.size(); i++){
             System.out.println(i + ". " + courseList.get(i).getCode() + "\t" + courseList.get(i).getName());
         }
