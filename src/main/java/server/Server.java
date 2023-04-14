@@ -115,10 +115,15 @@ public class Server {
                 listeCours.add(cours);
 
             }
+
             for (Course coursChoisi : listeCours) { // fait une liste qui contient seulement les cours de la session donnée en arg
                 if (coursChoisi.getSession().equals(arg)) {
                     listeCoursSession.add(coursChoisi);
                 }
+            }
+
+            if(arg.equals("all")){
+                listeCoursSession = listeCours;
             }
             // envoit la liste de cours de la session choisie en arg au client
             objectOutputStream.writeObject(listeCoursSession);

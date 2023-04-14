@@ -35,6 +35,18 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
+
+    public void connectServer(){
+        try {
+            this.socket = new Socket("127.0.0.1", 1337);
+            oos = new ObjectOutputStream(this.socket.getOutputStream());
+            oos.flush();
+            ois = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void inscription() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Veuillez saisir votre prénom:");
@@ -52,27 +64,24 @@ public class Client {
         String lettresMajuscules = troisPremieresLettres.toUpperCase();
         code = lettresMajuscules + code.substring(3);
 
-        //test
-        System.out.println("print " + code);
-        //Course cours = new Course("foutuProg", code, "Ayt");
 
-        //ArrayList<Course> listeCoursSession = this.getCourse(session); // ne fonctionne pas doit être la liste de cours de seulement la session voulue
+        ArrayList<Course> listeCoursSession = this.getCourse("all");// ne fonctionne pas doit être la liste de cours de seulement la session voulue
 
-        // ajouter une erreur si le choix de cours d'est pas dasn la liste de cours de la session donnée
-
+        // ajouter une erreur si le choix de cours d'est pas dans la liste de cours de la session donnée
         Course cours = null;
         for (Course course : listeCoursSession) {
             if (course.getCode().equals(code)) {
                 cours = course;
             }
         }
+
         if(cours == null){
             System.out.println("Le cours choisi n'existe pas!");
             return;
         }
 
         RegistrationForm registrationForm = new RegistrationForm(prenom, nom, email, matricule, cours);
-        System.out.println("se rend à inscrire");
+        this.connectServer();
         oos.writeObject("INSCRIRE ");//important de mettre un espace ici
         oos.writeObject(registrationForm); // comme vu sur piazza, mettre séparé
 
@@ -84,5 +93,5 @@ public class Client {
         }
 
 
-    }
+}
 }

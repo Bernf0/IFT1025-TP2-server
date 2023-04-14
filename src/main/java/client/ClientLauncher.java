@@ -2,6 +2,7 @@ package client;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import server.models.Course;
@@ -11,36 +12,48 @@ public class ClientLauncher {
         int port = 1337;
 
         try {
+            boolean disconnect = false;
             // Ouvrir une connexion avec le serveur
             Socket clientSocket = new Socket("127.0.0.1", port);
             Client client = new Client(clientSocket);
             System.out.println("*** Bienvenue au portail d'inscription de cours de l'UDEM ***");
             printCourse(client);
+            int choix = 0;
 
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Que souhaitez-vous faire?");
-            System.out.println("1.Consulter les cours offerts pour une autre session \n2.Inscription à un cours");
-            System.out.println("> Choix:");
-
-            int choix = scanner.nextInt();
-
-            while(choix != 1 & choix != 2){
-                System.out.println("Option non-valide!");
+            while(disconnect == false){
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Que souhaitez-vous faire?");
+                System.out.println("1.Consulter les cours offerts pour une session \n2.Inscription à un cours");
                 System.out.println("> Choix:");
                 choix = scanner.nextInt();
-            }
-            if(choix == 1){
-                printCourse(client);
-            }
-            if(choix == 2) {
-                client.inscription();
-            }
+                while(choix != 1 & choix != 2){
+                    System.out.println("Option non-valide!");
+                    System.out.println("> Choix:");
+                    choix = scanner.nextInt();
+                }
+                if(choix == 1){
+                    client.connectServer();
+                    printCourse(client);
+                }
+                if(choix == 2) {
+                    client.connectServer();
+                    client.inscription();
+                }
 
+                }
+
+                if(choix == 3){
+                    disconnect = true;
+                }
+            } catch (UnknownHostException ex) {
+            throw new RuntimeException(ex);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            throw new RuntimeException(ex);
         }
 
     }
+
+
 
     public static void printCourse(Client client){
         Scanner scanner = new Scanner(System.in);
