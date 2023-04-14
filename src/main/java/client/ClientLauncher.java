@@ -17,8 +17,9 @@ public class ClientLauncher {
             Socket clientSocket = new Socket("127.0.0.1", port);
             Client client = new Client(clientSocket);
             System.out.println("*** Bienvenue au portail d'inscription de cours de l'UDEM ***");
-            printCourse(client);
+            String sessionEnCours = printCourse(client);
             int choix = 0;
+
 
             while(disconnect == false){
                 Scanner scanner = new Scanner(System.in);
@@ -33,17 +34,18 @@ public class ClientLauncher {
                 }
                 if(choix == 1){
                     client.connectServer();
-                    printCourse(client);
+                    sessionEnCours = printCourse(client);
                 }
                 if(choix == 2) {
                     client.connectServer();
-                    client.inscription();
+                    client.inscription(sessionEnCours);
                 }
 
                 }
 
                 if(choix == 3){
                     disconnect = true;
+                    client.disconnect();
                 }
             } catch (UnknownHostException ex) {
             throw new RuntimeException(ex);
@@ -51,11 +53,12 @@ public class ClientLauncher {
             throw new RuntimeException(ex);
         }
 
+
     }
 
 
 
-    public static void printCourse(Client client){
+    public static String printCourse(Client client){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Veuillez choisir la session pour laquelle vous voulez consulter la liste de cours:");
         System.out.println("1.Automne \n2.Hiver \n3.Été");
@@ -94,5 +97,6 @@ public class ClientLauncher {
         for (int i = 0; i < courseList.size(); i++){
             System.out.println(i + ". " + courseList.get(i).getCode() + "\t" + courseList.get(i).getName());
         }
+        return session;
     }
 }

@@ -47,7 +47,7 @@ public class Client {
         }
     }
 
-    public void inscription() throws IOException {
+    public void inscription(String session) throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Veuillez saisir votre prénom:");
         String prenom = scanner.nextLine();
@@ -65,7 +65,7 @@ public class Client {
         code = lettresMajuscules + code.substring(3);
 
 
-        ArrayList<Course> listeCoursSession = this.getCourse("all");// ne fonctionne pas doit être la liste de cours de seulement la session voulue
+        ArrayList<Course> listeCoursSession = this.getCourse(session);// ne fonctionne pas doit être la liste de cours de seulement la session voulue
 
         // ajouter une erreur si le choix de cours d'est pas dans la liste de cours de la session donnée
         Course cours = null;

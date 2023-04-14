@@ -122,9 +122,6 @@ public class Server {
                 }
             }
 
-            if(arg.equals("all")){
-                listeCoursSession = listeCours;
-            }
             // envoit la liste de cours de la session choisie en arg au client
             objectOutputStream.writeObject(listeCoursSession);
             objectOutputStream.close();
@@ -186,6 +183,7 @@ public class Server {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+
     }
 }
 
