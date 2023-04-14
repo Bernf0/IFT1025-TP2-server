@@ -9,13 +9,39 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import server.models.Course;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class ClientGUI extends Application {
+
+    public static void main(String[] args) {
+        launch();
+    }
+
+    private Socket socket;
+
+    public ClientGUI(Socket socket) throws IOException {
+        this.socket = socket;
+    }
+
+    public void disconnect() throws IOException {
+        socket.close();
+    }
+
+    public void connectServer(){
+        try {
+            this.socket = new Socket("127.0.0.1", 1337);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage primaryStage) throws IOException {
         VBox root = new VBox();
         Scene scene = new Scene(root, 320, 250);
         SplitPane splitPane1 = new SplitPane();
@@ -93,13 +119,18 @@ public class ClientGUI extends Application {
         root.setAlignment(Pos.CENTER);
         root.setSpacing(10);
 
-        stage.setTitle("Inscription Udem");
-        stage.setScene(scene);
-        stage.show();
+        primaryStage.setTitle("Inscription Udem");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
-    public static void main(String[] args) {
-        launch();
+    public void inscription(String session){ // À implémenter
+
+    }
+
+    public ArrayList<Course> getCourse(String session){ // À implémenter
+
+        return null;
     }
 
 }
