@@ -173,7 +173,7 @@ public class Server {
             writer.close();
 
             // Envoyer un message de confirmation au client
-            String message = "Félicitations! Inscription réussie de " + registrationForm.getPrenom() +" au cours " + registrationForm.getCourse() + ".";
+            String message = "Félicitations! Inscription réussie de " + registrationForm.getPrenom() +" au cours " + registrationForm.getCourse().getName() + ".";
             System.out.println(message);
             objectOutputStream.writeObject(message);
             objectOutputStream.close();

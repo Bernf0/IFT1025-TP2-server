@@ -1,5 +1,5 @@
 null
-Course{name=Programmation1, code=IFT1015, session=Automne}
-charlie
-vigeaylt
-sdf
+Course{name=Programmation2, code=IFT1025, session=Hiver}
+b
+f
+d
