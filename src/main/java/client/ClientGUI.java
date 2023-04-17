@@ -7,11 +7,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Pair;
 import server.models.Course;
 import server.models.RegistrationForm;
@@ -30,15 +33,10 @@ public class ClientGUI extends Application {
     ObjectInputStream ois;
     Button boutonCours = new Button("Charger");
     Button envoyer = new Button("envoyer");
+    ClientGUIController controller = new ClientGUIController(this);
 
     public static void main(String[] args) {
         launch();
-    }
-
-
-    public ClientGUI() throws IOException {
-
-        
     }
 
     public void disconnect() throws IOException {
@@ -56,7 +54,7 @@ public class ClientGUI extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         VBox root = new VBox();
-        Scene scene = new Scene(root, 320, 250);
+        Scene scene = new Scene(root, 400, 400);
         SplitPane splitPane1 = new SplitPane();
 
         // SECTION GAUCHE: AFFICHER COURS
@@ -154,13 +152,22 @@ public class ClientGUI extends Application {
 
         EventHandler<MouseEvent> envoyerHandler =
                 e -> {
-                    inscription(comboBox.getValue(), prenom.getText(), nom.getText(), email.getText(), matricule.getText(), table.getSelectionModel().getSelectedItem());
+                    controller.inscription(comboBox.getValue(), fieldPrenom.getText(), fieldNom.getText(), fieldEmail.getText(), fieldMatricule.getText(), table.getSelectionModel().getSelectedItem());
                 };
         envoyer.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_CLICKED, envoyerHandler);
 
     }
 
-        public ArrayList<Course> getCours(String session){
+
+    public void chargerCours(TableView<Course> table, String session){
+        ArrayList<Course> listeCours = controller.getCours(session);
+        table.getItems().clear();
+        for(Course cours: listeCours){
+            table.getItems().add(cours);
+        }
+    }
+
+    public ArrayList<Course> getCours(String session){
         try {
             oos.writeObject("CHARGER " + session); //important de mettre un espace ici
             return (ArrayList<Course>) ois.readObject();
@@ -171,25 +178,26 @@ public class ClientGUI extends Application {
         }
     }
 
-
-
-    public void chargerCours(TableView<Course> table, String session){
-        ArrayList<Course> listeCours = getCours(session);
-        table.getItems().clear();
-        for(Course cours: listeCours){
-            table.getItems().add(cours);
-        }
-    }
-
-
-
-
     public void inscription(String session, String prenom, String nom, String email, String matricule, Course cours){// À implémenter
         String troisPremieresLettres = cours.getCode().substring(0,3);
         String lettresMajuscules = troisPremieresLettres.toUpperCase();
         String code = lettresMajuscules + cours.getCode().substring(3);
 
         RegistrationForm registrationForm = new RegistrationForm(prenom, nom, email, matricule, cours);
+
+        VBox root = new VBox();
+        Stage stage = new Stage();
+        Scene scene = new Scene(root, 700, 300);
+        Text confirmation = new Text("Félicitations! Inscription réussie de " + prenom +" au cours " + cours.getName() + ".");
+        root.getChildren().add(confirmation);
+
+        stage.setScene(scene);
+        stage.setTitle("Confirmation d'inscription");
+        stage.show();
+
+
+
+
         try {
             oos.writeObject("INSCRIRE ");//important de mettre un espace ici
             //oos.flush();
