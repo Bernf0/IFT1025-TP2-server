@@ -13,22 +13,43 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
+/**
+ * Il s'agit de la classe Server qui permet de créer un Serveur
+ * et de lui permettre de communiquer et de répondre aux besoins du client
+ */
 public class Server {
 
+    /**
+     * La commande pour l'inscription.
+     */
     public final static String REGISTER_COMMAND = "INSCRIRE";
+    /**
+     * La commande pour charger les cours.
+     */
     public final static String LOAD_COMMAND = "CHARGER";
     private final ServerSocket server;
     private Socket client;
-    private ObjectInputStream objectInputStream; //lire des objets du flux entrant de données depuis le client.
-    private ObjectOutputStream objectOutputStream; //écrire des objets dans le flux sortant de données vers le client.
-    private final ArrayList<EventHandler> handlers; //stocker les objets qui gèrent les événements liés aux commandes envoyées par les clients.
+    private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
+    private final ArrayList<EventHandler> handlers;
 
-    public Server(int port) throws IOException { // constructeur
+    /**
+     * Ce constructeur permet de créer une nouvelle instance de la classe Server pour écouter les nouvelles connexions sur le port choisi.
+     *
+     * @param port Le paramètre port est le numéro de port sur lequel se connecte le serveur pour écouter.
+     * @throws IOException Une IOException est lancée lorsque la créaction du socket du serveur ne fonctionne pas
+     */
+    public Server(int port) throws IOException {
         this.server = new ServerSocket(port, 1);
         this.handlers = new ArrayList<EventHandler>();
         this.addEventHandler(this::handleEvents);
     }
 
+    /**
+     * La méthode permet l'ajout d'un objet de type EventHandler à la liste handlers
+     *
+     * @param h Le paramètre h est l'objet de type EventHandler qui est ajouté
+     */
     public void addEventHandler(EventHandler h) { // ajout d'un objet EventHandler à la liste de handlers
         this.handlers.add(h);
     }
@@ -41,6 +62,12 @@ public class Server {
         }
     }
 
+    /**
+     * La méthode permet de se connecter au client, si la demande est faite.
+     * Elle permet aussi de d'écouter ses demandes sur le socket du serveur et de les traiter de façon infini et de se déconnecter de celui-ci.
+     *
+     * @throws Exception S'il y a une erreur qui se produit lors du traitements des demandes du client, il y a impression de l'exception dans la console.
+     */
     public void run() {
         while (true) {
             try {
@@ -57,6 +84,13 @@ public class Server {
         }
     }
 
+    /**
+     * La méthode permet d'écouter les demandes du client, tant qu'il y en a.
+     * Chaque demande permet de faire déclencher des évenements.
+     *
+     * @throws IOException Si une erreur est produite lors de la lecture de la demande du client.
+     * @throws ClassNotFoundException Si la classe de l'object venant du flux entrant n'est pas trouvée.
+     */
     public void listen() throws IOException, ClassNotFoundException {
         // écoute les entrées du flux données objectInputStream
         // et déclenche des évenements pour chaque commande reçue avec le alertHandlers
@@ -69,6 +103,12 @@ public class Server {
         }
     }
 
+    /**
+     * La méthode permet de séparer une ligne de commande en deux
+     *
+     * @param line La ligne de commande qui est envoyé par le client
+     * @return un object pair qui contient la commande et l'arugment
+     */
     public Pair<String, String> processCommandLine(String line) {
         // permet de traiter une ligne de commande sous forme de chaîne de caractères
         // et de la convertir en un objet 'Pair' qui contient cmd et arg séparés
@@ -78,12 +118,24 @@ public class Server {
         return new Pair<>(cmd, args);
     }
 
+    /**
+     * La méthode permet de déconnecter le serveur et ses flux d'entrée et de sortie
+     *
+     * @throws IOException Si une erreur se produit lors de la fermeture des flux
+     */
     public void disconnect() throws IOException {
         objectOutputStream.close();
         objectInputStream.close();
         client.close();
     }
 
+    /**
+     * La méthode permet d'appeler les méthodes correspondantes, soit handleLoadCourses ou handleRegistration,
+     * lorsque les commandes "INSCRIRE " ou "CHARGER " sont passées.
+     *
+     * @param cmd La commande qui sera effectuée par le serveur
+     * @param arg La session pour laquelle le client veut récupérer la liste de cours
+     */
     public void handleEvents(String cmd, String arg) {
         if (cmd.equals(REGISTER_COMMAND)) {
             handleRegistration();
@@ -105,33 +157,31 @@ public class Server {
             ArrayList<Course> listeCours = new ArrayList<Course>();
             ArrayList<Course> listeCoursSession = new ArrayList<Course>();
 
-
-            while (scan.hasNext()) { // lit le fichier et en fait une liste
+            // lit le fichier et en fait une liste
+            while (scan.hasNext()) {
                 String code = scan.next();
                 String name = scan.next();
                 String session = scan.next();
 
                 Course cours = new Course(name, code, session);
                 listeCours.add(cours);
-
             }
-
-            for (Course coursChoisi : listeCours) { // fait une liste qui contient seulement les cours de la session donnée en arg
+            // fait une liste qui contient seulement les cours de la session donnée en arg
+            for (Course coursChoisi : listeCours) {
                 if (coursChoisi.getSession().equals(arg)) {
                     listeCoursSession.add(coursChoisi);
                 }
             }
-
             // envoit la liste de cours de la session choisie en arg au client
             objectOutputStream.writeObject(listeCoursSession);
             objectOutputStream.flush();
-            //objectOutputStream.close();
+            objectOutputStream.close();
 
         } catch (FileNotFoundException e) {
             System.out.println("erreur à l'ouverture du fichier");
         } catch (IOException e) {
             System.out.println("Erreur à l'écriture");
-            throw new RuntimeException(e); // c'est intellij qui a rajouté ça
+            throw new RuntimeException(e);
         }
     }
     /**
