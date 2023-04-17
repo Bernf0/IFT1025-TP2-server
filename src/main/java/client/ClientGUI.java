@@ -1,15 +1,20 @@
 package client;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import server.models.Course;
+import server.models.RegistrationForm;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,23 +24,31 @@ import java.util.ArrayList;
 
 public class ClientGUI extends Application {
 
+    int port = 1337;
+    Socket socket;
+    ObjectOutputStream oos;
+    ObjectInputStream ois;
+    Button boutonCours = new Button("Charger");
+    Button envoyer = new Button("envoyer");
+
     public static void main(String[] args) {
         launch();
     }
 
-    private Socket socket;
 
-    public ClientGUI(Socket socket) throws IOException {
-        this.socket = socket;
+    public ClientGUI() throws IOException {
+
+        
     }
 
     public void disconnect() throws IOException {
-        socket.close();
     }
 
-    public void connectServer(){
+    public void connectServer(Socket socket){
         try {
-            this.socket = new Socket("127.0.0.1", 1337);
+            this.socket = socket;
+            this.oos = new ObjectOutputStream(socket.getOutputStream());
+            this.ois = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -53,11 +66,16 @@ public class ClientGUI extends Application {
         boxListeCours.getChildren().add(new Separator());
         VBox codeCours = new VBox();
 
-        TableView<String> table = new TableView<>();
-        TableColumn codeCol = new TableColumn("Code");
-        TableColumn coursCol = new TableColumn("Cours");
+        TableView<Course> table = new TableView<>();
 
-        table.getColumns().addAll(codeCol, coursCol);
+
+        TableColumn codeColonne = new TableColumn("Code");
+        codeColonne.setCellValueFactory(new PropertyValueFactory<>("code"));
+
+        TableColumn coursColonne = new TableColumn("Cours");
+        coursColonne.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        table.getColumns().addAll(codeColonne, coursColonne);
 
         codeCours.getChildren().add(table);
 
@@ -69,11 +87,10 @@ public class ClientGUI extends Application {
         comboBox.getItems().addAll(
                 "Automne",
                 "Hiver",
-                "Été"
+                "Ete"
         );
         boxChargementCours.getChildren().add(comboBox);
-        Button boutonCours = new Button("Charger");
-        boxChargementCours.getChildren().add(boutonCours);
+        boxChargementCours.getChildren().add(this.boutonCours);
 
         boxListeCours.getChildren().add(boxChargementCours);
 
@@ -108,7 +125,6 @@ public class ClientGUI extends Application {
         champsInscription.getChildren().addAll(boxPrenom, boxNom, boxEmail, boxMatricule);
         boxInscription.getChildren().add(champsInscription);
         boxInscription.getChildren().add(new Separator());
-        Button envoyer = new Button("envoyer");
         boxInscription.getChildren().add(envoyer);
 
 
@@ -122,15 +138,67 @@ public class ClientGUI extends Application {
         primaryStage.setTitle("Inscription Udem");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        Socket sockett = new Socket("127.0.0.1", port);
+        connectServer(sockett);
+
+
+        //boutonCours.setOnAction(actionEvent ->
+                //chargerCours(table, "Automne"));
+
+        EventHandler<MouseEvent> chargerHandler =
+                e -> {
+                chargerCours(table, comboBox.getValue());
+                };
+        boutonCours.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_CLICKED, chargerHandler);
+
+        EventHandler<MouseEvent> envoyerHandler =
+                e -> {
+                    inscription(comboBox.getValue(), prenom.getText(), nom.getText(), email.getText(), matricule.getText(), table.getSelectionModel().getSelectedItem());
+                };
+        envoyer.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_CLICKED, envoyerHandler);
+
     }
 
-    public void inscription(String session){ // À implémenter
+        public ArrayList<Course> getCours(String session){
+        try {
+            oos.writeObject("CHARGER " + session); //important de mettre un espace ici
+            return (ArrayList<Course>) ois.readObject();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+    public void chargerCours(TableView<Course> table, String session){
+        ArrayList<Course> listeCours = getCours(session);
+        table.getItems().clear();
+        for(Course cours: listeCours){
+            table.getItems().add(cours);
+        }
+    }
+
+
+
+
+    public void inscription(String session, String prenom, String nom, String email, String matricule, Course cours){// À implémenter
+        String troisPremieresLettres = cours.getCode().substring(0,3);
+        String lettresMajuscules = troisPremieresLettres.toUpperCase();
+        String code = lettresMajuscules + cours.getCode().substring(3);
+
+        RegistrationForm registrationForm = new RegistrationForm(prenom, nom, email, matricule, cours);
+        try {
+            oos.writeObject("INSCRIRE ");//important de mettre un espace ici
+            //oos.flush();
+            //oos.writeObject(registrationForm);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
-    public ArrayList<Course> getCourse(String session){ // À implémenter
-
-        return null;
     }
 
-}

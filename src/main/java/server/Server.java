@@ -124,7 +124,8 @@ public class Server {
 
             // envoit la liste de cours de la session choisie en arg au client
             objectOutputStream.writeObject(listeCoursSession);
-            objectOutputStream.close();
+            objectOutputStream.flush();
+            //objectOutputStream.close();
 
         } catch (FileNotFoundException e) {
             System.out.println("erreur à l'ouverture du fichier");
