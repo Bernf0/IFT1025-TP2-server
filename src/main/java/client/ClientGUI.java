@@ -92,7 +92,7 @@ public class ClientGUI extends Application {
 
         boxListeCours.getChildren().add(boxChargementCours);
 
-// SECTION DROITE: INSCRIPTION
+        // SECTION DROITE: INSCRIPTION
         VBox boxInscription = new VBox();
         Text textInscription = new Text("Formulaire d'inscription");
         boxInscription.getChildren().add(textInscription);
@@ -194,8 +194,6 @@ public class ClientGUI extends Application {
         stage.setScene(scene);
         stage.setTitle("Confirmation d'inscription");
         stage.show();
-
-
 
 
         try {

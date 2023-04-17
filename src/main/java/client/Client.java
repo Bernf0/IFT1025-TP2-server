@@ -64,7 +64,6 @@ public class Client {
         String lettresMajuscules = troisPremieresLettres.toUpperCase();
         code = lettresMajuscules + code.substring(3);
 
-
         ArrayList<Course> listeCoursSession = this.getCourse(session);// ne fonctionne pas doit être la liste de cours de seulement la session voulue
 
         // ajouter une erreur si le choix de cours d'est pas dans la liste de cours de la session donnée
@@ -74,7 +73,6 @@ public class Client {
                 cours = course;
             }
         }
-
         if(cours == null){
             System.out.println("Le cours choisi n'existe pas!");
             return;

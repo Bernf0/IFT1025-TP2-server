@@ -158,23 +158,26 @@ public class Server {
                 listeCours.add(cours);
 
             }
+            System.out.println(registrationForm.getCourse());
             for (Course coursInscrit : listeCours){
-                if (coursInscrit.getCode().equals(registrationForm.getCourse())){
+                if (coursInscrit.getCode().equals(registrationForm.getCourse().getCode())){
                     sessionInscrit = coursInscrit.getSession();
                 }
             }
             // Enregistrer l'objet dans un fichier text
             String fichierInscription = "inscription.txt";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(fichierInscription));
-            writer.write(sessionInscrit + "\n");
-            writer.write(registrationForm.getCourse().toString()+ "\n");
-            writer.write(registrationForm.getPrenom().toString()+ "\n");
-            writer.write(registrationForm.getNom().toString()+ "\n");
-            writer.write(registrationForm.getEmail().toString() + "\n");
+            boolean append = true;
+            BufferedWriter writer = new BufferedWriter(new FileWriter(fichierInscription, append));
+            writer.append(sessionInscrit + "\t");
+            writer.append(registrationForm.getCourse().getCode().toString()+ "\t");
+            writer.append(registrationForm.getPrenom().toString()+ "\t");
+            writer.append(registrationForm.getNom().toString()+ "\t");
+            writer.append(registrationForm.getEmail().toString() + "\t");
+            writer.newLine();
             writer.close();
 
             // Envoyer un message de confirmation au client
-            String message = "Félicitations! Inscription réussie de " + registrationForm.getPrenom() +" au cours " + registrationForm.getCourse().getName() + ".";
+            String message = "Félicitations! Inscription réussie de " + registrationForm.getPrenom() +" au cours " + registrationForm.getCourse().getCode() + ".";
             System.out.println(message);
             objectOutputStream.writeObject(message);
             objectOutputStream.close();

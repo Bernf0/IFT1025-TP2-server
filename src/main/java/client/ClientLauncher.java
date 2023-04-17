@@ -88,11 +88,6 @@ public class ClientLauncher {
             session = sessionsPossibles[2];
             courseList = client.getCourse(session);
         }
-
-        // Imprime la liste de cours pour la session choisie
-        if (session.equals("Ete")){
-            session = "Été";
-        }
         System.out.println("Les cours offerts pendant la session d'" + session.toLowerCase() + " sont:");
         for (int i = 0; i < courseList.size(); i++){
             System.out.println(i + ". " + courseList.get(i).getCode() + "\t" + courseList.get(i).getName());
