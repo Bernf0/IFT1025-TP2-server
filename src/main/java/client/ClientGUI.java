@@ -25,23 +25,62 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * La classe permet de créer une application client qui permet de s'inscrire à des cours de l'Université de Montréal.
+ * Elle se connecter à un serveur pour acquérir la liste de cours selon la session voulue et permettre à l'utilisateur de s'inscrire à un cours.
+ */
 public class ClientGUI extends Application {
-
-    int port = 1337;
-    Socket socket;
-    ObjectOutputStream oos;
-    ObjectInputStream ois;
+    /**
+     * Le port sur lequel le client se connecte au serveur.
+     */
+    public int port = 1337;
+    /**
+     * Le socket utilisé pour se connecter au serveur.
+     */
+    public Socket socket;
+    /**
+     * Le flux de sortie d'objets qui permet d'envoyer des données au serveur.
+     */
+    private ObjectOutputStream oos;
+    /**
+     * Le flux d'entrée d'objets qui permet de recevoir des données du serveur.
+     */
+    private ObjectInputStream ois;
+    /**
+     * Le bouton permettant d'afficher la listes des cours pour une session.
+     */
     Button boutonCours = new Button("Charger");
+    /**
+     * Le bouton permettant d'envoyer le formulaire d'inscription.
+     */
     Button envoyer = new Button("envoyer");
+    /**
+     * Le controleur permet de gérer les actions de l'utilisateur.
+     */
     ClientGUIController controller = new ClientGUIController(this);
 
+    /**
+     * La méthode main permet de faire rouler l'application client.
+     *
+     * @param args l'argument du terminal
+     */
     public static void main(String[] args) {
         launch();
     }
 
+    /**
+     * La méthode permet de se déconnecter du serveur.
+     * @throws IOException S'il y a une erreur de déconnection avec le serveur.
+     */
     public void disconnect() throws IOException {
     }
 
+    /**
+     * La méthode permet de connecter le client avec le serveur selon le socket choisi.
+     *
+     * @param socket Le socket utilisé pour la connection avec le serveur
+     * @throws IOException S'il y a une erreur de connection
+     */
     public void connectServer(Socket socket){
         try {
             this.socket = socket;
@@ -51,6 +90,13 @@ public class ClientGUI extends Application {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * La méthode permet la création de l'interface graphique et configure les différents boutons qui peuvent être utilisés par l'utilisateur.
+     *
+     * @param primaryStage la fenêtre principale de l'application
+     * @throws IOException S'il y a une erreur d'entrée ou de sortie des données lors de la connection avec le serveur.
+     */
     @Override
     public void start(Stage primaryStage) throws IOException {
         VBox root = new VBox();
@@ -158,7 +204,12 @@ public class ClientGUI extends Application {
 
     }
 
-
+    /**
+     * La méthode permet d'afficher la liste de cours pour la session voulue et de l'afficher dans la table voulue.
+     *
+     * @param table La table sur laquelle on affiche les cours de la session choisie.
+     * @param session La session pour laquelle on veut charger la liste de cours.
+     */
     public void chargerCours(TableView<Course> table, String session){
         ArrayList<Course> listeCours = controller.getCours(session);
         table.getItems().clear();
@@ -167,9 +218,17 @@ public class ClientGUI extends Application {
         }
     }
 
+    /**
+     * La méthode permet de récupérer la liste des cours pour une session spécifique.
+     *
+     * @param session La session pour laquelle on veut récupérer la liste de cours.
+     * @return la liste de cours de la session choisie.
+     * @throws IOException S'il y a une erreur d'entrée ou de sortie des données lors de la connection avec le serveur.
+     * @throws ClassNotFoundException
+     */
     public ArrayList<Course> getCours(String session){
         try {
-            oos.writeObject("CHARGER " + session); //important de mettre un espace ici
+            oos.writeObject("CHARGER " + session); 
             return (ArrayList<Course>) ois.readObject();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -178,7 +237,7 @@ public class ClientGUI extends Application {
         }
     }
 
-    public void inscription(String session, String prenom, String nom, String email, String matricule, Course cours){// À implémenter
+    public void inscription(String session, String prenom, String nom, String email, String matricule, Course cours){
         String troisPremieresLettres = cours.getCode().substring(0,3);
         String lettresMajuscules = troisPremieresLettres.toUpperCase();
         String code = lettresMajuscules + cours.getCode().substring(3);
@@ -197,7 +256,7 @@ public class ClientGUI extends Application {
 
 
         try {
-            oos.writeObject("INSCRIRE ");//important de mettre un espace ici
+            oos.writeObject("INSCRIRE ");
             //oos.flush();
             //oos.writeObject(registrationForm);
         } catch (IOException e) {
