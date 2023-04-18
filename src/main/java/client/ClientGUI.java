@@ -245,6 +245,34 @@ public class ClientGUI extends Application {
      * @throws IOException S'il y a une erreur dans la communication des données de l'inscription.
      */
     public void inscription(String session, String prenom, String nom, String email, String matricule, Course cours){
+        //Vérification que le email entré par l'utilisateur est valide.
+        if(!email.contains("@umontreal.ca")){
+            VBox root = new VBox();
+            Stage stage = new Stage();
+            Scene scene = new Scene(root, 700, 300);
+            Text textCourrielInvalide = new Text("Erreur! Courriel invalide!");
+            root.getChildren().add(textCourrielInvalide);
+
+            stage.setScene(scene);
+            stage.setTitle("Erreur!");
+            stage.show();
+            return;
+        }
+        // Vérification que l'utilisateur n'a pas oublié de sélectionner un cours.
+        if(cours == null){
+            VBox root = new VBox();
+            Stage stage = new Stage();
+            Scene scene = new Scene(root, 700, 300);
+            Text textCoursInvalide = new Text("Erreur! Vous devez sélectionner un cours!");
+            root.getChildren().add(textCoursInvalide);
+
+            stage.setScene(scene);
+            stage.setTitle("Erreur!");
+            stage.show();
+            return;
+        }
+
+        // Inscription de l'utilisateur
         String troisPremieresLettres = cours.getCode().substring(0,3);
         String lettresMajuscules = troisPremieresLettres.toUpperCase();
         String code = lettresMajuscules + cours.getCode().substring(3);
