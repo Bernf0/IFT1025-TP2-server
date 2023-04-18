@@ -272,6 +272,34 @@ public class ClientGUI extends Application {
             return;
         }
 
+        if(matricule.length() != 6){
+            VBox root = new VBox();
+            Stage stage = new Stage();
+            Scene scene = new Scene(root, 700, 300);
+            Text textCoursInvalide = new Text("Erreur! Le matricule doit avoir 6 chiffres!");
+            root.getChildren().add(textCoursInvalide);
+
+            stage.setScene(scene);
+            stage.setTitle("Erreur!");
+            stage.show();
+            return;
+        }
+        try{
+            Integer.parseInt(matricule);
+        }
+            catch(Exception e){
+                VBox root = new VBox();
+                Stage stage = new Stage();
+                Scene scene = new Scene(root, 700, 300);
+                Text textCoursInvalide = new Text("Erreur! Le matricule doit être composé de 6 chiffres!");
+                root.getChildren().add(textCoursInvalide);
+
+                stage.setScene(scene);
+                stage.setTitle("Erreur!");
+                stage.show();
+                return;
+            }
+
         // Inscription de l'utilisateur
         String troisPremieresLettres = cours.getCode().substring(0,3);
         String lettresMajuscules = troisPremieresLettres.toUpperCase();

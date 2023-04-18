@@ -1,3 +1,4 @@
 Course{name=Programmation2, code=IFT1025, session=Hiver}
 Automne	IFT1015	4rt	ret	rt	
 Automne	IFT1015	dsf	sdf	@umontreal.ca	
+Automne	IFT2255	dfs	dfsa	@umontreal.ca	
