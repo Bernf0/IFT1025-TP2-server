@@ -224,11 +224,11 @@ public class ClientGUI extends Application {
      * @param session La session pour laquelle on veut récupérer la liste de cours.
      * @return la liste de cours de la session choisie.
      * @throws IOException S'il y a une erreur d'entrée ou de sortie des données lors de la connection avec le serveur.
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException Si la classe de l'object venant du flux n'est pas trouvée.
      */
     public ArrayList<Course> getCours(String session){
         try {
-            oos.writeObject("CHARGER " + session); 
+            oos.writeObject("CHARGER " + session);
             return (ArrayList<Course>) ois.readObject();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -237,6 +237,16 @@ public class ClientGUI extends Application {
         }
     }
 
+    /**
+     * La méthode permet d'inscrire un étudiant pour un cours choisi et affiche un message de confirmation.
+     * @param session La session pour laquelle l'inscription est effectuée
+     * @param prenom Le prénom de l'étudiant
+     * @param nom Le nom de l'étudiant
+     * @param email Le courriel de l'étudiant
+     * @param matricule Le matricule de l'étudiant
+     * @param cours Le numéro de cours pour laquelle l'inscription est effectuée
+     * @throws IOException S'il y a une erreur dans la communication des données de l'inscription.
+     */
     public void inscription(String session, String prenom, String nom, String email, String matricule, Course cours){
         String troisPremieresLettres = cours.getCode().substring(0,3);
         String lettresMajuscules = troisPremieresLettres.toUpperCase();
@@ -257,12 +267,11 @@ public class ClientGUI extends Application {
 
         try {
             oos.writeObject("INSCRIRE ");
-            //oos.flush();
-            //oos.writeObject(registrationForm);
+            oos.writeObject(registrationForm);
+            oos.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     }

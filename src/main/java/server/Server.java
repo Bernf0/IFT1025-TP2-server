@@ -27,10 +27,25 @@ public class Server {
      * La commande pour charger les cours.
      */
     public final static String LOAD_COMMAND = "CHARGER";
+    /**
+     * Le socket utilisé pour se connecter au client.
+     */
     private final ServerSocket server;
+    /**
+     * Le socket utilisé pour se connecter par le client.
+     */
     private Socket client;
+    /**
+     * Le flux de sortie d'objets qui permet d'envoyer des données au client.
+     */
     private ObjectInputStream objectInputStream;
+    /**
+     * Le flux d'entrée d'objets qui permet de recevoir des données du client.
+     */
     private ObjectOutputStream objectOutputStream;
+    /**
+     * La liste contenant des objets EventHandler
+     */
     private final ArrayList<EventHandler> handlers;
 
     /**

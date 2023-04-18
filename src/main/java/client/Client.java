@@ -82,6 +82,7 @@ public class Client {
         this.connectServer();
         oos.writeObject("INSCRIRE ");//important de mettre un espace ici
         oos.writeObject(registrationForm); // comme vu sur piazza, mettre séparé
+        oos.flush();
 
         try {
             String message = (String) ois.readObject();
