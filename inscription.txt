@@ -1,5 +1,2 @@
-null
 Course{name=Programmation2, code=IFT1025, session=Hiver}
-b
-f
-d
+Automne	IFT1015	4rt	ret	rt	

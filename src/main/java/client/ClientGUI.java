@@ -187,14 +187,13 @@ public class ClientGUI extends Application {
         connectServer(sockett);
 
 
-        //boutonCours.setOnAction(actionEvent ->
-                //chargerCours(table, "Automne"));
 
         EventHandler<MouseEvent> chargerHandler =
-                e -> {
-                chargerCours(table, comboBox.getValue());
+               e -> {
+            chargerCours(table, comboBox.getValue());
                 };
         boutonCours.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_CLICKED, chargerHandler);
+
 
         EventHandler<MouseEvent> envoyerHandler =
                 e -> {
@@ -266,6 +265,7 @@ public class ClientGUI extends Application {
 
 
         try {
+            this.connectServer(new Socket("127.0.0.1", port));
             oos.writeObject("INSCRIRE ");
             oos.writeObject(registrationForm);
             oos.flush();
