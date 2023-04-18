@@ -103,7 +103,7 @@ public class ClientGUI extends Application {
         Scene scene = new Scene(root, 400, 400);
         SplitPane splitPane1 = new SplitPane();
 
-        // SECTION GAUCHE: AFFICHER COURS
+        // Section gauche de la fenêtre: affichage des cours offerts dans un TableView (table).
         VBox boxListeCours = new VBox();
         Text titreCours = new Text("Liste des cours:");
         boxListeCours.getChildren().add(titreCours);
@@ -112,7 +112,7 @@ public class ClientGUI extends Application {
 
         TableView<Course> table = new TableView<>();
 
-
+        //Création des colonnes de table pour qu'elles affichent le code et le nom des cours.
         TableColumn codeColonne = new TableColumn("Code");
         codeColonne.setCellValueFactory(new PropertyValueFactory<>("code"));
 
@@ -120,11 +120,10 @@ public class ClientGUI extends Application {
         coursColonne.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         table.getColumns().addAll(codeColonne, coursColonne);
-
         codeCours.getChildren().add(table);
-
         boxListeCours.getChildren().add(codeCours);
 
+        // Création du comboBox permettant à l'utilisateur de sélectionner la session désirée.
         boxListeCours.getChildren().add(new Separator());
         HBox boxChargementCours = new HBox();
         ComboBox<String> comboBox = new ComboBox<>();
@@ -135,16 +134,15 @@ public class ClientGUI extends Application {
         );
         boxChargementCours.getChildren().add(comboBox);
         boxChargementCours.getChildren().add(this.boutonCours);
-
         boxListeCours.getChildren().add(boxChargementCours);
 
-        // SECTION DROITE: INSCRIPTION
+        // Section droite de la fenêtre: inscription au cours sélectionné par l'utilisateur.
         VBox boxInscription = new VBox();
         Text textInscription = new Text("Formulaire d'inscription");
         boxInscription.getChildren().add(textInscription);
         boxInscription.getChildren().add(new Separator());
 
-        // ENTRER LES DIFFÉRENTES INFOS
+        // Création des TextFields permettant à l'utilisateur d'entrer ses informations concernant l'inscription (prénom, nom, email et matricule0
         HBox boxPrenom = new HBox();
         Text prenom = new Text("Prénom:");
         TextField fieldPrenom = new TextField();
@@ -187,14 +185,14 @@ public class ClientGUI extends Application {
         connectServer(sockett);
 
 
-
+        // Ajout d'un eventHandler qui permet de charger les cours dans la table lorsque l'utilisateur appuie sur le bouton charger.
         EventHandler<MouseEvent> chargerHandler =
                e -> {
             chargerCours(table, comboBox.getValue());
                 };
         boutonCours.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_CLICKED, chargerHandler);
 
-
+        // Ajout d'un eventHandler qui permet de gérer l'inscription lorsque l'utilisateur appuie sur le bouton envoyer.
         EventHandler<MouseEvent> envoyerHandler =
                 e -> {
                     controller.inscription(comboBox.getValue(), fieldPrenom.getText(), fieldNom.getText(), fieldEmail.getText(), fieldMatricule.getText(), table.getSelectionModel().getSelectedItem());
