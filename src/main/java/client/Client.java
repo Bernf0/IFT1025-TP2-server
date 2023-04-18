@@ -27,7 +27,7 @@ public class Client {
 
     public ArrayList<Course> getCourse(String session) {
         try {
-            oos.writeObject("CHARGER " + session); //important de mettre un espace ici
+            oos.writeObject("CHARGER " + session);
             return (ArrayList<Course>) ois.readObject();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -64,7 +64,7 @@ public class Client {
         String lettresMajuscules = troisPremieresLettres.toUpperCase();
         code = lettresMajuscules + code.substring(3);
 
-        ArrayList<Course> listeCoursSession = this.getCourse(session);// ne fonctionne pas doit être la liste de cours de seulement la session voulue
+        ArrayList<Course> listeCoursSession = this.getCourse(session);
 
         // ajouter une erreur si le choix de cours d'est pas dans la liste de cours de la session donnée
         Course cours = null;
@@ -80,8 +80,8 @@ public class Client {
 
         RegistrationForm registrationForm = new RegistrationForm(prenom, nom, email, matricule, cours);
         this.connectServer();
-        oos.writeObject("INSCRIRE ");//important de mettre un espace ici
-        oos.writeObject(registrationForm); // comme vu sur piazza, mettre séparé
+        oos.writeObject("INSCRIRE ");
+        oos.writeObject(registrationForm);
         oos.flush();
 
         try {

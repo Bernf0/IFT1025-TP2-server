@@ -40,19 +40,12 @@ public class ClientLauncher {
                     client.connectServer();
                     client.inscription(sessionEnCours);
                 }
-
-                }
-
-                if(choix == 3){
-                    disconnect = true;
-                    client.disconnect();
                 }
             } catch (UnknownHostException ex) {
             throw new RuntimeException(ex);
-        } catch (IOException ex) {
+            } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-
 
     }
 

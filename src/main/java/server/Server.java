@@ -69,9 +69,13 @@ public class Server {
         this.handlers.add(h);
     }
 
+    /**
+     * La méthode permet d'envoyer à chaque évenement arg et cmd provenant du client
+     *
+     * @param cmd La commande qui sera effectuée par le serveur
+     * @param arg La session pour laquelle le client veut récupérer la liste de cours
+     */
     private void alertHandlers(String cmd, String arg) {
-        // envoie à chaque h de la liste handlers que le message (cmd, arg) est arrivée
-        // et c'est à l'event de choisir comment réagir
         for (EventHandler h : this.handlers) {
             h.handle(cmd, arg);
         }
@@ -107,8 +111,6 @@ public class Server {
      * @throws ClassNotFoundException Si la classe de l'object venant du flux entrant n'est pas trouvée.
      */
     public void listen() throws IOException, ClassNotFoundException {
-        // écoute les entrées du flux données objectInputStream
-        // et déclenche des évenements pour chaque commande reçue avec le alertHandlers
         String line;
         if ((line = this.objectInputStream.readObject().toString()) != null) {
             Pair<String, String> parts = processCommandLine(line);
@@ -119,14 +121,12 @@ public class Server {
     }
 
     /**
-     * La méthode permet de séparer une ligne de commande en deux
+     * La méthode permet de séparer une ligne de commande en deux.
      *
      * @param line La ligne de commande qui est envoyé par le client
      * @return un object pair qui contient la commande et l'arugment
      */
     public Pair<String, String> processCommandLine(String line) {
-        // permet de traiter une ligne de commande sous forme de chaîne de caractères
-        // et de la convertir en un objet 'Pair' qui contient cmd et arg séparés
         String[] parts = line.split(" ");
         String cmd = parts[0];
         String args = String.join(" ", Arrays.asList(parts).subList(1, parts.length));
@@ -247,7 +247,7 @@ public class Server {
             objectOutputStream.writeObject(message);
             objectOutputStream.close();
 
-        } catch (IOException e) { //vérifier les exceptions, il en manque
+        } catch (IOException e) {
             System.out.println("Erreur lors de l'écriture du fichier");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
